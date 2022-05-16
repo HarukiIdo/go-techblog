@@ -1,13 +1,50 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+	"time"
+
+	"github.com/flosch/pongo2"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+)
+
+const tmpPath = "templates/"
+
+var e = createMux()
 
 func main() {
-	router := gin.Default()
-	router.LoadHTMLGlob("templates/*html")
+	e.GET("/", articleindex)
 
-	router.GET("/", func(ctx *gin.Context){
-		ctx.HTML(200, "index.html", gin.H{})
-	})
-	router.Run()
+	e.Logger.Fatal(e.Start(":8080"))
+}
+
+func createMux() *echo.Echo {
+	e := echo.New()
+
+	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
+	e.Use(middleware.Gzip())
+
+	return e
+}
+
+func articleindex(c echo.Context) error {
+	data := map[string]interface{}{
+		"Message": "Hello World!",
+		"Now":     time.Now(),
+	}
+	return render(c, "article/index.html", data)
+}
+
+func htmlBlob(file string, data map[string]interface{}) ([]byte, error) {
+	return pongo2.Must(pongo2.FromCache(tmpPath + file)).ExecuteBytes(data)
+}
+
+func render(c echo.Context, file string, data map[string]interface{}) error {
+	b, err := htmlBlob(file, data)
+	if err != nil {
+		return c.NoContent(http.StatusInternalServerError)
+	}
+	return c.HTMLBlob(http.StatusOK, b)
 }
