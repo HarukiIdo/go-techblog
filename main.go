@@ -1,24 +1,35 @@
 package main
 
 import (
-	"net/http"
-	"time"
+	"log"
+	"os"
 
-	"github.com/flosch/pongo2"
+	"github.com/HarukiIdo/go-techblog/handler"
+	"github.com/HarukiIdo/go-techblog/repository"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
 
-const tmpPath = "templates/"
-
+var db *sqlx.DB
 var e = createMux()
 
 func main() {
-	e.GET("/", articleindex)
+	db = connectDB()
+	repository.SetDB(db)
 
-	e.Logger.Fatal(e.Start(":8080"))
+	//ルーティングの設定
+	e.GET("/", handler.Articleindex)
+	e.GET("/new", handler.ArticleNew)
+	e.GET(":id", handler.ArticleShow)
+	e.GET(":id/edit", handler.ArticleEdit)
+
+	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
 
+// ルーティング
 func createMux() *echo.Echo {
 	e := echo.New()
 
@@ -26,25 +37,24 @@ func createMux() *echo.Echo {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Gzip())
 
+	// src/css ディレクトリ配下のファイルに css のパスでアクセス可能にする
+	e.Static("/css", "src/css")
+	e.Static("/js", "src/js")
+
 	return e
 }
 
-func articleindex(c echo.Context) error {
-	data := map[string]interface{}{
-		"Message": "Hello World!",
-		"Now":     time.Now(),
-	}
-	return render(c, "article/index.html", data)
-}
-
-func htmlBlob(file string, data map[string]interface{}) ([]byte, error) {
-	return pongo2.Must(pongo2.FromCache(tmpPath + file)).ExecuteBytes(data)
-}
-
-func render(c echo.Context, file string, data map[string]interface{}) error {
-	b, err := htmlBlob(file, data)
+func connectDB() *sqlx.DB {
+	dsn := os.Getenv("DSN")
+	driver := os.Getenv("DRIVER")
+	log.Println(dsn)
+	db, err := sqlx.Open(driver, dsn)
 	if err != nil {
-		return c.NoContent(http.StatusInternalServerError)
+		e.Logger.Fatal(err)
 	}
-	return c.HTMLBlob(http.StatusOK, b)
+	if err := db.Ping(); err != nil {
+		e.Logger.Fatal(err)
+	}
+	log.Println("db connection succeeded")
+	return db
 }
