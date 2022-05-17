@@ -22,6 +22,7 @@ func ConnectDB(e *echo.Echo) *sqlx.DB {
 	if err != nil {
 		e.Logger.Fatal(err)
 	}
+	defer db.Close()
 	if err := db.Ping(); err != nil {
 		e.Logger.Fatal(err)
 	}
