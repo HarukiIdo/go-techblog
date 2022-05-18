@@ -5,6 +5,9 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css">
+  <link rel="stylesheet" href="/css/layout.css">
   <title>{% block title %} MyTechBlog{% endblock %}</title>
 
   {% block css %}{% endblock %}
@@ -12,7 +15,9 @@
 
 <body>
   <header>
-    <h1><a href="/">MyTechBlog</a></h1>
+    <div class="header">
+      <a class="header_logo" href="/">My Tech Blog</a>
+    </div>
   </header>
 
   <main>
@@ -20,7 +25,17 @@
   </main>
 
   <footer>
-
+    <div class="footer">
+      <ul class="footer_menu">
+        <li class="footer_menu_item"><a href="">Twitter</a></li>
+        <li class="footer_menu_item"><a href="">GitHub</a></li>
+        <li class="footer_menu_item"><a href="">プライバシーポリシー</a></li>
+        <li class="footer_menu_item"><a href="">運営者</a></li>
+      </ul>
+      <div class="footer_copy-right">
+        © 2022 HarukiIdo Tech Blog 
+      </div>
+    </div>
   </footer>
 
   {% block js %}{% endblock %}

@@ -17,20 +17,19 @@ var schema string
 func ConnectDB(e *echo.Echo) *sqlx.DB {
 	dsn := os.Getenv("DSN")
 	driver := os.Getenv("DRIVER")
-	log.Println(dsn)
 	db, err := sqlx.Open(driver, dsn)
 	if err != nil {
 		e.Logger.Fatal(err)
 	}
-	defer db.Close()
 	if err := db.Ping(); err != nil {
 		e.Logger.Fatal(err)
 	}
 	log.Println("db connection succeeded")
 
-	// テーブルを作成する
-	if _, err := db.Exec(schema); err != nil {
-		return nil
-	}
+	// テーブルを作成と挿入
+	// if _, err := db.Exec(schema); err != nil {
+	// 	log.Println(err)
+	// 	return nil
+	// }
 	return db
 }

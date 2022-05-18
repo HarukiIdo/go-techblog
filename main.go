@@ -12,6 +12,7 @@ import (
 func main() {
 	var e = router.CreateMux()
 	db := db.ConnectDB(e)
+	defer db.Close()
 	repository.SetDB(db)
 
 	//ルーティングの設定

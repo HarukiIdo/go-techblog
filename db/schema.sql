@@ -4,11 +4,7 @@ CREATE TABLE IF NOT EXISTS articles (
   PRIMARY KEY (id)
 );
 
-INSERT INTO articles(title) VALUES
-('タイトル1')
-('タイトル2')
-('タイトル3')
-('タイトル4')
-('タイトル5')
-('タイトル6')
-('タイトル7')
+INSERT INTO articles(id, title) VALUES
+(0, 'タイトル1'),
+(0, 'タイトル2'),
+(0, 'タイトル3');
