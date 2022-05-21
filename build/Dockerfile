@@ -1,15 +1,18 @@
-FROM golang:1.16-alpine
+FROM golang:1.17
 
+# コンテナの作業ディレクトリを設定
 WORKDIR /app
 
-COPY go.mod ./
-COPY go.sum ./
+# ローカルのgo.modとgo.sumを作業ディレクトリにコピー
+COPY go.mod go.sum .
+
+# 必要なパッケージをインストール
+# airをインストール
 RUN go mod download
+RUN go install github.com/cosmtrek/air@latest
+COPY . .
 
-RUN go get github.com/cosmtrek/air@latest
-RUN go get github.com/pressly/goose/v3/cmd/goose@latest
 
-COPY . /app
-
-CMD ["air", "-c", ".air.toml"]
+# air -c .air.tomlコマンドでairを起動する
+CMD ["main"]
 
