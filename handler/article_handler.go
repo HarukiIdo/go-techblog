@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -70,6 +71,20 @@ func ArticleNew(c echo.Context) error {
 		"Now":     time.Now(),
 	}
 	return render(c, "article/new.html", data)
+}
+
+func ArticleDelete(c echo.Context) error {
+
+	// パスパラメータから記事IDを取得
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	// 記事削除処理を呼び出す
+	if err := repository.ArticleDelete(id); err != nil {
+		c.Logger().Error(err.Error())
+		return c.JSON(http.StatusInternalServerError, "")
+	}
+
+	return c.JSON(http.StatusOK, fmt.Sprintf("Article %d is deleted", id))
 }
 
 // ArticleShow ...

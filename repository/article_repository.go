@@ -39,7 +39,7 @@ func ArticleCreate(article *model.Article) (sql.Result, error) {
 	// トランザクションを開始
 	tx := db.MustBegin()
 
-	// SQLを実行する
+	// SQLを実行
 	// エラーが発生した場合はロールバック
 	res, err := tx.NamedExec(query, article)
 	if err != nil {
@@ -52,4 +52,21 @@ func ArticleCreate(article *model.Article) (sql.Result, error) {
 
 	// SQLの実行結果を返す
 	return res, nil
+}
+
+// ArticleDelete ...
+func ArticleDelete(id int) error {
+
+	query := "DELETE FROM articles WHERE id = ?"
+
+	// トランザクションを開始
+	tx := db.MustBegin()
+
+	// SQLを実行
+	// エラーが発生した場合は、ロールバックしエラー内容を返す
+	if _, err := tx.Exec(query, id); err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit()
 }

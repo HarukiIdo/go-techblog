@@ -21,6 +21,7 @@ func main() {
 	e.GET(":id", handler.ArticleShow)
 	e.GET(":id/edit", handler.ArticleEdit)
 	e.POST("/", handler.AriticleCreate)
+	e.DELETE("/:id", handler.ArticleDelete)
 
 	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
 }
