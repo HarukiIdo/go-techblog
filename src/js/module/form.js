@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const articleFormBodyTextArea = document.querySelector('.article-form__input--body');
   const articleFormPreviewTextArea = document.querySelector('.article-form__preview-body-contents');
 
-  // 新規作成画面か編集画面かをURLから判定します
+  // 新規作成画面か編集画面かをURLから判定
   const mode = { method: ", url: " };
   if (window.location.pathname.endsWith('new')) {
     mode.method = 'POST'
@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     mode.method = 'PATCH'
     mode.url = `/${window.location.pathname.split('/')[1]}`
   }
+  const csrfToken = document.getElementsByName('csrf')[0].content;
 
   const { method, url } = mode;
 
@@ -53,6 +54,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // 入力フォームを表示し、プレビューを非表示にする
     articleFormBody.style.display = 'grid';
     articleFormPreview.style.display = 'none';
+  });
+
+  saveBtn.addEventListener('click', event => {
+    event.preventDefault();
+
+    // フォームに入力された内容を取得
+    const fd = new FormData(form)
+    let status
+
+    fetch(url, {
+      method: method,
+      headers: { 'X-CSRF-Token': csrfToken },
+      body: fd
+    })
+      .then(res => {
+        status = res.status;
+        return res.json();
+      })
+      .then(body => {
+        console.log(JSON.stringify(body));
+
+        //成功時は一覧画面に遷移
+        if (status == 200) {
+          window.location.href = url;
+        }
+
+        if (body.ValudatonErrors) {
+
+        }
+      })
+      .catch(err => console.log(err));
+
   });
 
   cancelBtn.addEventListener('click', event => {

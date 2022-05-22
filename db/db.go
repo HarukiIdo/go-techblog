@@ -17,6 +17,8 @@ var schema string
 func ConnectDB(e *echo.Echo) *sqlx.DB {
 	dsn := os.Getenv("DSN")
 	driver := os.Getenv("DRIVER")
+
+	// DBオープン
 	db, err := sqlx.Open(driver, dsn)
 	if err != nil {
 		e.Logger.Fatal(err)

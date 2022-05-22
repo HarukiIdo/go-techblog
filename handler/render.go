@@ -20,6 +20,9 @@ func htmlBlob(file string, data map[string]interface{}) ([]byte, error) {
 // テンプレートエンジンを呼び出し、レスポンスと記事の中身を返す
 func render(c echo.Context, file string, data map[string]interface{}) error {
 
+	// CSRFトークンを取り出す
+	data["CSRF"] = c.Get("csrf").(string)
+	
 	// 定義したhtmlBlob()関数を呼び出し、生成されたHTMLをバイトデータとして受け取る
 	b, err := htmlBlob(file, data)
 	if err != nil {
