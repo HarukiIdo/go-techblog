@@ -10,10 +10,10 @@
 - Ginなどのフレームワークを用いてコード量を減らす
 
 ## 使用技術
-フロントエンド：HTML,CSS(BootStrap),JavaScript
-バックエンド：Go(Echo)+sqlx
-DB：MySQL
-インフラ：Docker, Docker Compose, Heroku
+フロントエンド：HTML,CSS(BootStrap),JavaScript  
+バックエンド：Go(Echo)+sqlx  
+DB：MySQL  
+インフラ：Docker, Docker Compose, Heroku  
 
 ## DBマイグーイション
 ### ファイルの作成
