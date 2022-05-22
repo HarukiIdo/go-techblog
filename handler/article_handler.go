@@ -50,7 +50,7 @@ func AriticleCreate(c echo.Context) error {
 // テンプレートエンジンに埋め込む記事の中身となるデータを渡す
 func Articleindex(c echo.Context) error {
 	//記事データの一覧を取得する
-	ariticles, err := repository.ArticleList()
+	ariticles, err := repository.ArticleListByCursor(0)
 	if err != nil {
 		log.Println(err.Error())
 		return c.NoContent(http.StatusInternalServerError)
@@ -58,8 +58,6 @@ func Articleindex(c echo.Context) error {
 
 	// dataに取得した記事データを格納する
 	data := map[string]interface{}{
-		"Message":  " Article Index",
-		"Now":      time.Now(),
 		"Articles": ariticles,
 	}
 	return render(c, "article/index.html", data)
