@@ -73,6 +73,7 @@ func ArticleNew(c echo.Context) error {
 	return render(c, "article/new.html", data)
 }
 
+// ArticleDelete ...
 func ArticleDelete(c echo.Context) error {
 
 	// パスパラメータから記事IDを取得
@@ -90,17 +91,28 @@ func ArticleDelete(c echo.Context) error {
 // ArticleShow ...
 func ArticleShow(c echo.Context) error {
 
-	//urlのパスからパラメータを取得
+	// パスパラメータから記事のIDを取得
+	// 文字列を数値型にキャスト
 	id, _ := strconv.Atoi(c.Param("id"))
-	data := map[string]interface{}{
-		"Message": "Article New",
-		"Now":     time.Now(),
-		"ID":      id,
+
+	// 記事データを取得
+	article, err := repository.ArticleGetByID(id)
+
+	if err != nil {
+		c.Logger().Error(err.Error())
+		return c.NoContent(http.StatusInternalServerError)
 	}
+
+	// テンプレートに渡すデータをmapに格納
+	data := map[string]interface{}{
+		"Article": article,
+	}
+
+	// テンプレートファイルとデータを指定してHTMLを生成し、クライアントに返却
 	return render(c, "article/show.html", data)
 }
 
-// AritcleEdit ...
+// ArticleEdit ...
 func ArticleEdit(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("id"))
 	data := map[string]interface{}{

@@ -12,14 +12,18 @@ import (
 // ArticleListByCursor ...
 func ArticleListByCursor(cursor int) ([]*model.Article, error) {
 
+	// 引数で渡されたカーソルの値が0以下の場合は、int型の最大値で置き換える
 	if cursor <= 0 {
 		cursor = math.MaxInt32
 	}
 
 	query := `SELECT * FROM articles WHERE id < ? ORDER BY id desc LIMIT 10`
 
+	// クエリ結果を格納するためのスライスを初期化
 	articles := make([]*model.Article, 0, 10)
 
+	// クエリを実行
+	//  Selectは複数レコードを取得することが可能
 	if err := db.Select(&articles, query, cursor); err != nil {
 		return nil, err
 	}
@@ -34,7 +38,7 @@ func ArticleCreate(article *model.Article) (sql.Result, error) {
 	article.CreatedAt = now
 	article.UpdatedAt = now
 
-	query := `INSERT INTO articles(title, body, createdat, updatedat) VALUES (:title, :body, :createdat, :updatedat);`
+	query := "INSERT INTO articles(title, body, createdat, updatedat) VALUES (:title, :body, :createdat, :updatedat);"
 
 	// トランザクションを開始
 	tx := db.MustBegin()
@@ -57,7 +61,7 @@ func ArticleCreate(article *model.Article) (sql.Result, error) {
 // ArticleDelete ...
 func ArticleDelete(id int) error {
 
-	query := "DELETE FROM articles WHERE id = ?"
+	query := "DELETE FROM articles WHERE id = ?;"
 
 	// トランザクションを開始
 	tx := db.MustBegin()
@@ -69,4 +73,24 @@ func ArticleDelete(id int) error {
 		return err
 	}
 	return tx.Commit()
+}
+
+// ArticleGetByID ...
+func ArticleGetByID(id int) (*model.Article, error) {
+
+	query := "SELECT * FROM articles WHERE id = ?;"
+
+	// クエリ結果を格納する変数
+	var article model.Article
+
+	// SQLを実行
+	// エラーが発生した場合はエラーを返却
+	if err := db.Get(&article, query, id); err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	log.Printf("ID:%d", article.ID)
+
+	return &article, nil
 }

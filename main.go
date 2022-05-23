@@ -18,8 +18,8 @@ func main() {
 	//ルーティングの設定
 	e.GET("/", handler.Articleindex)
 	e.GET("/new", handler.ArticleNew)
-	e.GET(":id", handler.ArticleShow)
-	e.GET(":id/edit", handler.ArticleEdit)
+	e.GET("/:id", handler.ArticleShow)
+	e.GET("/:id/edit", handler.ArticleEdit)
 	e.POST("/", handler.AriticleCreate)
 	e.DELETE("/:id", handler.ArticleDelete)
 

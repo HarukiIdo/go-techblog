@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const articleFormPreviewTextArea = document.querySelector('.article-form__preview-body-contents');
 
   // 新規作成画面か編集画面かをURLから判定
-  const mode = { method: ", url: " };
+  const mode = { method: '', url: '' };
   if (window.location.pathname.endsWith('new')) {
     mode.method = 'POST'
     mode.url = '/'
