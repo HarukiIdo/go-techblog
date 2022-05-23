@@ -14,10 +14,15 @@ a {
 }
 
 .footer {
+
+  width: 100%;
   background: #333;
   padding: 4px 10%;
   color: #fff;
   font-size: 16px;
+
+  position: sticky;
+  top: 100vh;
 }
 
 .footer_menu {
