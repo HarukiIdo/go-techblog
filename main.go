@@ -31,5 +31,9 @@ func main() {
 	e.DELETE("/api/articles/:articleID", handler.ArticleDelete)
 	e.PATCH("/api/articles/:articleID", handler.ArticleUpdate)
 
-	e.Logger.Fatal(e.Start(":" + os.Getenv("PORT")))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	e.Logger.Fatal(e.Start(":" + port))
 }

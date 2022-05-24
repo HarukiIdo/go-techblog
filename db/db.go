@@ -29,10 +29,5 @@ func ConnectDB(e *echo.Echo) *sqlx.DB {
 	}
 	log.Println("db connection succeeded")
 
-	// テーブルを作成と挿入
-	// if _, err := db.Exec(schema); err != nil {
-	// 	log.Println(err)
-	// 	return nil
-	// }
 	return db
 }
