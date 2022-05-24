@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/HarukiIdo/go-techblog/model"
@@ -20,7 +21,7 @@ type ArticleCreateOutput struct {
 }
 
 // ArticleCreate ...
-func AriticleCreate(c echo.Context) error {
+func ArticleCreate(c echo.Context) error {
 
 	// フォームの内容を格納する構造体とレスポンスとして返却する構造体を宣言
 	var article model.Article
@@ -48,8 +49,15 @@ func AriticleCreate(c echo.Context) error {
 	return c.JSON(http.StatusOK, output)
 }
 
-// テンプレートエンジンに埋め込む記事の中身となるデータを渡す
-func Articleindex(c echo.Context) error {
+// ArticleList ...
+func ArticleList(c echo.Context) error {
+
+	data := map[string]interface{}{}
+	return render(c, "article/index.html", data)
+}
+
+// ArticleIndex ...
+func ArticleIndex(c echo.Context) error {
 	//記事データの一覧を取得する
 	ariticles, err := repository.ArticleListByCursor(0)
 	if err != nil {
@@ -77,7 +85,7 @@ func ArticleNew(c echo.Context) error {
 func ArticleDelete(c echo.Context) error {
 
 	// パスパラメータから記事IDを取得
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, _ := strconv.Atoi(c.Param("articleID"))
 
 	// 記事削除処理を呼び出す
 	if err := repository.ArticleDelete(id); err != nil {
@@ -93,7 +101,7 @@ func ArticleShow(c echo.Context) error {
 
 	// パスパラメータから記事のIDを取得
 	// 文字列を数値型にキャスト
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, _ := strconv.Atoi(c.Param("articleID"))
 
 	// 記事データを取得
 	article, err := repository.ArticleGetByID(id)
@@ -114,11 +122,58 @@ func ArticleShow(c echo.Context) error {
 
 // ArticleEdit ...
 func ArticleEdit(c echo.Context) error {
-	id, _ := strconv.Atoi(c.Param("id"))
+	id, _ := strconv.Atoi(c.Param("articleID"))
+
+	article, err := repository.ArticleGetByID(id)
+
+	if err != nil {
+		c.Logger().Error(err.Error())
+		return c.NoContent(http.StatusInternalServerError)
+	}
+
+	// テンプレートに渡すデータをmapに格納
 	data := map[string]interface{}{
-		"Message": "Article Edit",
-		"Now":     time.Now(),
-		"ID":      id,
+		"Article": article,
 	}
 	return render(c, "article/edit.html", data)
+}
+
+func ArticleUpdate(c echo.Context) error {
+
+	// リクエスト送信元のパスを取得
+	// パスから記事IDを抽出
+	ref := c.Request().Referer()
+	refID := strings.Split(ref, "/")[4]
+
+	// リクエストURLのパスパラメータから記事IDを取得
+	reqID := c.Param("articleID")
+
+	// 編集画面で表示している記事と更新する記事が異なる場合
+	// 更新処理をせずにエラーを返却
+	if refID != reqID {
+		log.Println("ID not match")
+		return c.JSON(http.StatusBadRequest, "")
+	}
+
+	var article model.Article
+	var output ArticleCreateOutput
+
+	// フォームで送信されたデータを変数に格納
+	if err := c.Bind(&article); err != nil {
+		return c.JSON(http.StatusBadRequest, output)
+	}
+
+	// IDをint型にキャスト
+	articleID, _ := strconv.Atoi(reqID)
+	article.ID = articleID
+
+	_, err := repository.ArticleUpdate(&article)
+	if err != nil {
+		c.Logger().Error(err.Error())
+		output.Message = err.Error()
+		return c.JSON(http.StatusInternalServerError, output)
+	}
+	output.Article = &article
+
+	return c.JSON(http.StatusOK, output)
 }

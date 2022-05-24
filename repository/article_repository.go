@@ -94,3 +94,28 @@ func ArticleGetByID(id int) (*model.Article, error) {
 
 	return &article, nil
 }
+
+func ArticleUpdate(article *model.Article) (sql.Result, error) {
+
+	// 現在日時を記事構造体に設定
+	article.UpdatedAt = time.Now()
+
+	query := "UPDATE articles SET title = :title, body = :body, updatedat := updatedat where id = :id;"
+
+	// トランザクションを開始
+	tx := db.MustBegin()
+
+	// SQLを実行
+	// クエリ文字列内の:title, :body, :updatedatには、
+	// 第２引数のArticle構造体のTitle, Body, IDがbindされる
+	res, err := tx.NamedExec(query, article)
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	// エラーがない場合はコミットし、
+	// SQLの実行結果を返す
+	tx.Commit()
+	return res, nil
+}

@@ -19,10 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const mode = { method: '', url: '' };
   if (window.location.pathname.endsWith('new')) {
     mode.method = 'POST'
-    mode.url = '/'
+    mode.url = '/articles'
   } else if (window.location.pathname.endsWith('edit')) {
     mode.method = 'PATCH'
-    mode.url = `/${window.location.pathname.split('/')[1]}`
+    mode.url = `/articles/${window.location.pathname.split('/')[2]}`
+    console.log(mode.url)
   }
   const csrfToken = document.getElementsByName('csrf')[0].content;
 
@@ -63,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const fd = new FormData(form)
     let status
 
-    fetch(url, {
+    fetch(`/api${url}`, {
       method: method,
       headers: { 'X-CSRF-Token': csrfToken },
       body: fd
@@ -74,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
       })
       .then(body => {
         console.log(JSON.stringify(body));
+        console.log("checkpoint")
 
         //成功時は一覧画面に遷移
         if (status == 200) {
@@ -81,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (body.ValudatonErrors) {
-
+          // バリデーションエラー時の処理
         }
       })
       .catch(err => console.log(err));
