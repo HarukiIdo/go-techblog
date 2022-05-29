@@ -7,10 +7,16 @@ a {
   background: #333;
   padding: 16px;
   color: #fff;
+  display: flex;
 }
 
 .header_logo {
   color: #fff;
+}
+
+.auth_button {
+  margin-right: 0;
+  margin-left: auto;
 }
 
 .footer {

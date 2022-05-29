@@ -12,7 +12,7 @@
   <link rel="icon" href="data:,">
   <title>{% block title %} MyTechBlog{% endblock %}</title>
 
-  {% block css %}{% endblock %}
+  {% block css %} {% endblock %}
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.2/css/all.css">
 </head>
 
@@ -20,6 +20,9 @@
   <header>
     <div class="header">
       <a class="header_logo" href="/">My Tech Blog</a>
+      <div class="auth_button">
+        <a class="header_login_button" href="/auth">認証</a>
+      </div>
     </div>
   </header>
 
@@ -41,7 +44,8 @@
     </div>
   </footer>
 
-  {% block js %}{% endblock %}
+  {% block js %}
+  {% endblock %}
 </body>
 
 </html>

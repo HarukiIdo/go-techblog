@@ -5,7 +5,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-// CreateMux ... 
+// CreateMux ...
 func CreateMux() *echo.Echo {
 
 	// Echoインスタンスを作成
