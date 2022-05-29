@@ -4,36 +4,39 @@ import (
 	"os"
 
 	"github.com/HarukiIdo/go-techblog/db"
-	"github.com/HarukiIdo/go-techblog/handler"
 	"github.com/HarukiIdo/go-techblog/handler/router"
 	"github.com/HarukiIdo/go-techblog/repository"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
-	var e = router.CreateMux()
+	// Echoインスタンスを作成
+	e := echo.New()
+
+	// Middlewareの実行
+	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
+	e.Use(middleware.Gzip())
+	e.Use(middleware.CSRF())
+
+	// src/css ディレクトリ配下のファイルに css のパスでアクセス可能にする
+	e.Static("/css", "src/css")
+	e.Static("/js", "src/js")
+
+	// DBの設定
 	db := db.ConnectDB(e)
 	defer db.Close()
 	repository.SetDB(db)
 
-	// ルーティングの設定
-	// TOPページに記事の一覧を表示
-	e.GET("/", handler.ArticleIndex)
-
-	// 記事に関連する画面を返す処理
-	e.GET("/articles", handler.ArticleIndex)                // 一覧画面
-	e.GET("/articles/new", handler.ArticleNew)              // 新規作成画面
-	e.GET("/articles/:articleID", handler.ArticleShow)      // 詳細画面
-	e.GET("/articles/:articleID/edit", handler.ArticleEdit) // 編集画面
-
-	// JSONを返却する処理
-	e.GET("/api/articles", handler.ArticleList)
-	e.POST("/api/articles", handler.ArticleCreate)
-	e.DELETE("/api/articles/:articleID", handler.ArticleDelete)
-	e.PATCH("/api/articles/:articleID", handler.ArticleUpdate)
+	// ルーティング
+	router.CreateMux(e)
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
+
+	// サーバ起動
 	e.Logger.Fatal(e.Start(":" + port))
 }

@@ -1,25 +1,26 @@
 package router
 
 import (
+	"github.com/HarukiIdo/go-techblog/handler"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
-// CreateMux ... 
-func CreateMux() *echo.Echo {
+// CreateMux ...
+func CreateMux(e *echo.Echo) {
 
-	// Echoインスタンスを作成
-	e := echo.New()
+	// ルーティングの設定
+	// TOPページに記事の一覧を表示
+	e.GET("/", handler.ArticleIndex)
 
-	// Middlewareの実行
-	e.Use(middleware.Recover())
-	e.Use(middleware.Logger())
-	e.Use(middleware.Gzip())
-	e.Use(middleware.CSRF())
+	// 記事に関連する画面を返す処理
+	e.GET("/articles", handler.ArticleIndex)                // 一覧画面
+	e.GET("/articles/new", handler.ArticleNew)              // 新規作成画面
+	e.GET("/articles/:articleID", handler.ArticleShow)      // 詳細画面
+	e.GET("/articles/:articleID/edit", handler.ArticleEdit) // 編集画面
 
-	// src/css ディレクトリ配下のファイルに css のパスでアクセス可能にする
-	e.Static("/css", "src/css")
-	e.Static("/js", "src/js")
-
-	return e
+	// JSONを返却する処理
+	e.GET("/api/articles", handler.ArticleList)
+	e.POST("/api/articles", handler.ArticleCreate)
+	e.DELETE("/api/articles/:articleID", handler.ArticleDelete)
+	e.PATCH("/api/articles/:articleID", handler.ArticleUpdate)
 }
