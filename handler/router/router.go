@@ -5,10 +5,13 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 )
 
-// ルーティング
+// CreateMux ... 
 func CreateMux() *echo.Echo {
+
+	// Echoインスタンスを作成
 	e := echo.New()
 
+	// Middlewareの実行
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 	e.Use(middleware.Gzip())

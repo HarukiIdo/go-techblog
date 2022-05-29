@@ -19,6 +19,6 @@ COPY . ./
 # ビルド
 RUN go build -o app 
 
-# air -c .air.tomlコマンドでairを起動する
+# アプリを起動
 CMD ["app"]
 
