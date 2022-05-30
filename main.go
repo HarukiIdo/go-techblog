@@ -1,16 +1,22 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/HarukiIdo/go-techblog/db"
 	"github.com/HarukiIdo/go-techblog/handler/router"
+	"github.com/HarukiIdo/go-techblog/middle"
 	"github.com/HarukiIdo/go-techblog/repository"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// 環境変数の読み込み
+	loadEnv()
+
 	// Echoインスタンスを作成
 	e := echo.New()
 
@@ -24,7 +30,7 @@ func main() {
 	e.Static("/css", "src/css")
 	e.Static("/js", "src/js")
 
-	// DBの設定
+	// DB接続設定
 	db := db.ConnectDB(e)
 	defer db.Close()
 	repository.SetDB(db)
@@ -39,4 +45,10 @@ func main() {
 
 	// サーバ起動
 	e.Logger.Fatal(e.Start(":" + port))
+}
+
+func loadEnv() {
+	if err := godotenv.Load(".env"); err != nil {
+		log.Println(".envファイルの読み込みに失敗しました")
+	}
 }
