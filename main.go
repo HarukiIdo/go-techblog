@@ -6,11 +6,9 @@ import (
 
 	"github.com/HarukiIdo/go-techblog/db"
 	"github.com/HarukiIdo/go-techblog/handler/router"
-	"github.com/HarukiIdo/go-techblog/middle"
-	"github.com/HarukiIdo/go-techblog/repository"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -20,23 +18,23 @@ func main() {
 	// Echoインスタンスを作成
 	e := echo.New()
 
-	// Middlewareの実行
+	// Middlewareの呼び出し
 	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 	e.Use(middleware.Gzip())
 	e.Use(middleware.CSRF())
 
-	// src/css ディレクトリ配下のファイルに css のパスでアクセス可能にする
+	// src/cssを/cssのパスで,
+	// src/jsを/jsのパスでアクセス可能にする
 	e.Static("/css", "src/css")
 	e.Static("/js", "src/js")
 
 	// DB接続設定
-	db := db.ConnectDB(e)
+	db := db.NewDB(e)
 	defer db.Close()
-	repository.SetDB(db)
 
 	// ルーティング
-	router.CreateMux(e)
+	router.NewRouter(e, db)
 
 	port := os.Getenv("PORT")
 	if port == "" {

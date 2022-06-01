@@ -13,8 +13,8 @@ import (
 //go:embed schema.sql
 var schema string
 
-// DBと接続
-func ConnectDB(e *echo.Echo) *sqlx.DB {
+// NewDB returns mysql driver based *sqlx.DB
+func NewDB(e *echo.Echo) *sqlx.DB {
 	dsn := os.Getenv("DSN")
 	driver := os.Getenv("DRIVER")
 
@@ -23,7 +23,7 @@ func ConnectDB(e *echo.Echo) *sqlx.DB {
 	if err != nil {
 		e.Logger.Fatal(err)
 	}
-	
+
 	if err := db.Ping(); err != nil {
 		e.Logger.Fatal(err)
 	}

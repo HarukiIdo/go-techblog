@@ -13,6 +13,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+
+// ArticleHandler defines repository interface
+type ArticleHandler struct {
+	ar repository.ArticleRepository
+}
+
+// NewArticleHandler returns ArticleHandler based http.Handler
+func NewArticleHandler(ar repository.ArticleRepository) *ArticleHandler {
+	return &ArticleHandler{
+		ar: ar,
+	}
+}
+
 // ArticleCreateOutput ...
 type ArticleCreateOutput struct {
 	Article          *model.Article
@@ -21,7 +34,7 @@ type ArticleCreateOutput struct {
 }
 
 // ArticleCreate ...
-func ArticleCreate(c echo.Context) error {
+func (h *ArticleHandler) ArticleCreate(c echo.Context) error {
 
 	// フォームの内容を格納する構造体とレスポンスとして返却する構造体を宣言
 	var article model.Article
@@ -34,7 +47,7 @@ func ArticleCreate(c echo.Context) error {
 	}
 
 	// repositoryを呼び出して、フォーム内容の保存処理を実行
-	res, err := repository.ArticleCreate(&article)
+	res, err := h.ar.ArticleCreate(&article)
 	if err != nil {
 		c.Logger().Error(err.Error)
 		return c.JSON(http.StatusInternalServerError, output)
@@ -50,16 +63,16 @@ func ArticleCreate(c echo.Context) error {
 }
 
 // ArticleList ...
-func ArticleList(c echo.Context) error {
+func (h *ArticleHandler)ArticleList(c echo.Context) error {
 
 	data := map[string]interface{}{}
 	return render(c, "article/index.html", data)
 }
 
 // ArticleIndex ...
-func ArticleIndex(c echo.Context) error {
+func (h *ArticleHandler) ArticleIndex(c echo.Context) error {
 	//記事データの一覧を取得する
-	ariticles, err := repository.ArticleListByCursor(0)
+	ariticles, err := h.ar.ArticleListByCursor(0)
 	if err != nil {
 		log.Println(err.Error())
 		return c.NoContent(http.StatusInternalServerError)
@@ -73,7 +86,7 @@ func ArticleIndex(c echo.Context) error {
 }
 
 // ArticleNew ...
-func ArticleNew(c echo.Context) error {
+func (h *ArticleHandler) ArticleNew(c echo.Context) error {
 	data := map[string]interface{}{
 		"Message": "Article New",
 		"Now":     time.Now(),
@@ -82,13 +95,13 @@ func ArticleNew(c echo.Context) error {
 }
 
 // ArticleDelete ...
-func ArticleDelete(c echo.Context) error {
+func (h *ArticleHandler) ArticleDelete(c echo.Context) error {
 
 	// パスパラメータから記事IDを取得
 	id, _ := strconv.Atoi(c.Param("articleID"))
 
 	// 記事削除処理を呼び出す
-	if err := repository.ArticleDelete(id); err != nil {
+	if err := h.ar.ArticleDelete(id); err != nil {
 		c.Logger().Error(err.Error())
 		return c.JSON(http.StatusInternalServerError, "")
 	}
@@ -97,14 +110,14 @@ func ArticleDelete(c echo.Context) error {
 }
 
 // ArticleShow ...
-func ArticleShow(c echo.Context) error {
+func (h *ArticleHandler) ArticleShow(c echo.Context) error {
 
 	// パスパラメータから記事のIDを取得
 	// 文字列を数値型にキャスト
 	id, _ := strconv.Atoi(c.Param("articleID"))
 
 	// 記事データを取得
-	article, err := repository.ArticleGetByID(id)
+	article, err := h.ar.ArticleGetByID(id)
 
 	if err != nil {
 		c.Logger().Error(err.Error())
@@ -121,10 +134,10 @@ func ArticleShow(c echo.Context) error {
 }
 
 // ArticleEdit ...
-func ArticleEdit(c echo.Context) error {
+func (h *ArticleHandler) ArticleEdit(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("articleID"))
 
-	article, err := repository.ArticleGetByID(id)
+	article, err := h.ar.ArticleGetByID(id)
 
 	if err != nil {
 		c.Logger().Error(err.Error())
@@ -138,7 +151,7 @@ func ArticleEdit(c echo.Context) error {
 	return render(c, "article/edit.html", data)
 }
 
-func ArticleUpdate(c echo.Context) error {
+func (h *ArticleHandler) ArticleUpdate(c echo.Context) error {
 
 	// リクエスト送信元のパスを取得
 	// パスから記事IDを抽出
@@ -167,7 +180,7 @@ func ArticleUpdate(c echo.Context) error {
 	articleID, _ := strconv.Atoi(reqID)
 	article.ID = articleID
 
-	_, err := repository.ArticleUpdate(&article)
+	_, err := h.ar.ArticleUpdate(&article)
 	if err != nil {
 		c.Logger().Error(err.Error())
 		output.Message = err.Error()
