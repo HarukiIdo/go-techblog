@@ -19,7 +19,7 @@ type ArticleHandler struct {
 	ar repository.ArticleRepository
 }
 
-// NewArticleHandler returns ArticleHandler based http.Handler
+// NewArticleHandler returns ArticleHandler based echo.Handler
 func NewArticleHandler(ar repository.ArticleRepository) *ArticleHandler {
 	return &ArticleHandler{
 		ar: ar,

@@ -6,6 +6,7 @@ import (
 	"github.com/HarukiIdo/go-techblog/repository"
 	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 // NewRouter ...
@@ -36,4 +37,10 @@ func NewRouter(e *echo.Echo, articleDB *sqlx.DB) {
 	e.POST("/api/articles", newHandler.ArticleCreate)
 	e.DELETE("/api/articles/:articleID", newHandler.ArticleDelete)
 	e.PATCH("/api/articles/:articleID", newHandler.ArticleUpdate)
+
+	// Middlewareの呼び出し
+	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
+	e.Use(middleware.Gzip())
+	e.Use(middleware.CSRF())
 }

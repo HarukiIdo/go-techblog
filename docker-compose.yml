@@ -1,40 +1,49 @@
 version: '3'
+
 services:
   go:
     build:
       context: .
-      dockerfile: build/Dockerfile
+      dockerfile: ./build/Dockerfile
     command: air -c .air.toml
     container_name: go
-    environment:
-      - PORT
-      - DSN
-      - DRIVER
     stdin_open: true
     tty: true
-    volumes: 
+    volumes:
       - .:/app
     ports:
       - "8080:8080"
     depends_on:
-      - db 
-  
+      - db
+    networks:
+      - internal
+      - external
+
   db:
     image: mysql:5.7
     container_name: db
-    environment: 
-      - MYSQL_ROOT_PASSWORD
-      - MYSQL_DATABASE
-      - MYSQL_USER 
-      - MYSQL_PASSWORD
-      - TZ
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: go-db
+      MYSQL_USER: go-user
+      MYSQL_PASSWORD: password
+      TZ: 'Asia/Tokyo'
+
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
       - db-data:/var/lib/mysql
       - ./db/my.cnf:/etc/mysql/conf.d/mycnf
     ports:
       - "3306:3306"
-    
-volumes: 
+    networks:
+      - internal
+
+volumes:
   db-data:
     driver: local
+
+networks:
+  internal:
+    internal: true
+  external:
+    name: api_netword

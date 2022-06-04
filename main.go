@@ -8,7 +8,6 @@ import (
 	"github.com/HarukiIdo/go-techblog/handler/router"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -17,12 +16,6 @@ func main() {
 
 	// Echoインスタンスを作成
 	e := echo.New()
-
-	// Middlewareの呼び出し
-	e.Use(middleware.Recover())
-	e.Use(middleware.Logger())
-	e.Use(middleware.Gzip())
-	e.Use(middleware.CSRF())
 
 	// src/cssを/cssのパスで,
 	// src/jsを/jsのパスでアクセス可能にする
