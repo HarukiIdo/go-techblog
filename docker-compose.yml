@@ -31,7 +31,7 @@ services:
 
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     volumes:
-      - db-data:/var/lib/mysql
+      - ./db:/var/lib/mysql
       - ./db/my.cnf:/etc/mysql/conf.d/mycnf
     ports:
       - "3306:3306"
@@ -46,4 +46,4 @@ networks:
   internal:
     internal: true
   external:
-    name: api_netword
+    name: api_network

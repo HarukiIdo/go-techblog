@@ -3,6 +3,7 @@ package db
 import (
 	_ "embed"
 	"log"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -11,6 +12,8 @@ import (
 
 //go:embed schema.sql
 var schema string
+
+const db_env = "prod"
 
 // NewDB returns mysql driver based *sqlx.DB
 func NewDB(e *echo.Echo) *sqlx.DB {
@@ -23,14 +26,18 @@ func NewDB(e *echo.Echo) *sqlx.DB {
 	dbAddress := "db"
 
 	// 本番環境なら環境変数からDB情報を取得する
-	// if os.Getenv("DB_ENV") == "prod" {
-	// 	dbName = os.Getenv("MYSQL_DATABASE")
-	// 	dbUser = os.Getenv("MYSQL_USER")
-	// 	dbPass = os.Getenv("MYSQL_PASSWORD")
-	// }
+	// TODO: Getenvして空ならデフォルト値を、
+	// 値が入っていたらその値を返す関数を作って呼び出す
+	if os.Getenv("DB_ENV") == db_env {
+		dbName = os.Getenv("MYSQL_DATABASE")
+		dbUser = os.Getenv("MYSQL_USER")
+		dbPass = os.Getenv("MYSQL_PASSWORD")
+	}
 
 	// DSNの設定
 	dsn := dbUser + ":" + dbPass + "@tcp(" + dbAddress + ":3306)/" + dbName + "?parseTime=true&autocommit=0&sql_mode=%27TRADITIONAL,NO_AUTO_VALUE_ON_ZERO,ONLY_FULL_GROUP_BY%27"
+
+	dsn = "go-user:go-pass@tcp(db:3306)/?parseTime=true&autocommit=0&sql_mode=%27TRADITIONAL,NO_AUTO_VALUE_ON_ZERO,ONLY_FULL_GROUP_BY%27"
 
 	// DBオープン
 	db, err := sqlx.Open(dbDriver, dsn)
