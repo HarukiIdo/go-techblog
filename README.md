@@ -48,14 +48,19 @@ migrate create -ext sql -dir db/migrations -seq create_aritcle
 ```
 
 ### マイグレーションの実行
+環境依存情報の設定
 ```
-migrate -database YOUR_DATABASE_URL -path PATH_TO_YOUR_MIGRATIONS up MIGRATION_VERSION
+export MYSQL_URL="mysql://go_user:password@tcp(127.0.0.1:3306)/go_db?multiStatements=true"
 ```
 
-- ex
-    - 000002_articles_add_columns.upが実行される
+マイグレーションファイルの作成
 ```
-migrate -database "mysql://go_user:password@tcp(127.0.0.1:3306)/go_db?multiStatements=true" -path=db/migrations/ up 1
+migrate create -ext sql -dir db/migrations -seq create_articles_table
+```
+
+マイグレーションの実行
+```
+migrate -database ${MYSQL_URL} -path=db/migrations/ up 1
 ```
 
 ## 実行
@@ -65,4 +70,15 @@ docker compose up -d
 ## 停止
 ```
 docker compose down
+```
+
+
+## コンテナで立ち上げたMySQLに接続する
+```
+docker exec -it コンテナ名 bash
+```
+
+ホストはlocalhostと指定するとローカルマシンのmysqlソケットを探しに行くのでエラーになるので、127.0.0.1ホストを指定
+```
+mysql -u 127.0.0.1 -P 3306 -u ユーザ名 -p
 ```
