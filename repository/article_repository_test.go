@@ -1,10 +1,20 @@
 package repository
 
-import "testing"
+import (
+	"testing"
+)
 
-func TestArticleListByCursor(t *testing.T) {
+func TestArticle_Create(t *testing.T) {
 
-	//testCases := []struct{
+	// t.Run(
+	// 	"清浄系：エラーなし",
+	// 	func (t *testing.T)  {
+	// 		article := &model.Article{
+	// 			Title: "article title",
+	// 			Body: "article body",
+	// 		}
 
-	//}
+	// 		//db,modk,err:=
+	// 	}
+	// )
 }

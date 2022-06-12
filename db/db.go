@@ -27,6 +27,7 @@ func NewDB(e *echo.Echo) *sqlx.DB {
 		e.Logger.Fatal(err)
 	}
 
+	// 接続確認
 	if err := db.Ping(); err != nil {
 		e.Logger.Fatal(err)
 	}
