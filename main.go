@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/HarukiIdo/go-techblog/db"
-	"github.com/HarukiIdo/go-techblog/handler/router"
+	"github.com/HarukiIdo/go-techblog/router"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 )

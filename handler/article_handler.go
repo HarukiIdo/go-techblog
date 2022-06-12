@@ -13,15 +13,25 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
+type ArticleHandler interface {
+	ArticleCreate(c echo.Context) error
+	ArticleList(c echo.Context) error
+	ArticleIndex(c echo.Context) error
+	ArticleNew(c echo.Context) error
+	ArticleDelete(c echo.Context) error
+	ArticleShow(c echo.Context) error
+	ArticleEdit(c echo.Context) error
+	ArticleUpdate(c echo.Context) error
+}
 
 // ArticleHandler defines repository interface
-type ArticleHandler struct {
+type articleHandler struct {
 	ar repository.ArticleRepository
 }
 
 // NewArticleHandler returns ArticleHandler based echo.Handler
-func NewArticleHandler(ar repository.ArticleRepository) *ArticleHandler {
-	return &ArticleHandler{
+func NewArticleHandler(ar repository.ArticleRepository) ArticleHandler {
+	return &articleHandler{
 		ar: ar,
 	}
 }
@@ -34,7 +44,7 @@ type ArticleCreateOutput struct {
 }
 
 // ArticleCreate ...
-func (h *ArticleHandler) ArticleCreate(c echo.Context) error {
+func (h *articleHandler) ArticleCreate(c echo.Context) error {
 
 	// フォームの内容を格納する構造体とレスポンスとして返却する構造体を宣言
 	var article model.Article
@@ -63,18 +73,18 @@ func (h *ArticleHandler) ArticleCreate(c echo.Context) error {
 }
 
 // ArticleList ...
-func (h *ArticleHandler)ArticleList(c echo.Context) error {
+func (h *articleHandler) ArticleList(c echo.Context) error {
 
 	data := map[string]interface{}{}
 	return render(c, "article/index.html", data)
 }
 
 // ArticleIndex ...
-func (h *ArticleHandler) ArticleIndex(c echo.Context) error {
+func (h *articleHandler) ArticleIndex(c echo.Context) error {
 	//記事データの一覧を取得する
 	ariticles, err := h.ar.ArticleListByCursor(0)
 	if err != nil {
-		log.Println(err.Error())
+		//log.Println(err.Error())
 		return c.NoContent(http.StatusInternalServerError)
 	}
 
@@ -86,7 +96,7 @@ func (h *ArticleHandler) ArticleIndex(c echo.Context) error {
 }
 
 // ArticleNew ...
-func (h *ArticleHandler) ArticleNew(c echo.Context) error {
+func (h *articleHandler) ArticleNew(c echo.Context) error {
 	data := map[string]interface{}{
 		"Message": "Article New",
 		"Now":     time.Now(),
@@ -95,7 +105,7 @@ func (h *ArticleHandler) ArticleNew(c echo.Context) error {
 }
 
 // ArticleDelete ...
-func (h *ArticleHandler) ArticleDelete(c echo.Context) error {
+func (h *articleHandler) ArticleDelete(c echo.Context) error {
 
 	// パスパラメータから記事IDを取得
 	id, _ := strconv.Atoi(c.Param("articleID"))
@@ -110,7 +120,7 @@ func (h *ArticleHandler) ArticleDelete(c echo.Context) error {
 }
 
 // ArticleShow ...
-func (h *ArticleHandler) ArticleShow(c echo.Context) error {
+func (h *articleHandler) ArticleShow(c echo.Context) error {
 
 	// パスパラメータから記事のIDを取得
 	// 文字列を数値型にキャスト
@@ -134,7 +144,7 @@ func (h *ArticleHandler) ArticleShow(c echo.Context) error {
 }
 
 // ArticleEdit ...
-func (h *ArticleHandler) ArticleEdit(c echo.Context) error {
+func (h *articleHandler) ArticleEdit(c echo.Context) error {
 	id, _ := strconv.Atoi(c.Param("articleID"))
 
 	article, err := h.ar.ArticleGetByID(id)
@@ -151,7 +161,7 @@ func (h *ArticleHandler) ArticleEdit(c echo.Context) error {
 	return render(c, "article/edit.html", data)
 }
 
-func (h *ArticleHandler) ArticleUpdate(c echo.Context) error {
+func (h *articleHandler) ArticleUpdate(c echo.Context) error {
 
 	// リクエスト送信元のパスを取得
 	// パスから記事IDを抽出

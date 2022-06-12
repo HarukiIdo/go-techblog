@@ -3,5 +3,10 @@ ALTER TABLE articles
   add column created datetime,
   add column updated datetime;
 
-UPDATE articles Set created = CURRENT_TIMESTAMP where created is null;
-UPDATE articles Set updated = CURRENT_TIMESTAMP where updated is null;
+UPDATE articles 
+Set created = CURRENT_TIMESTAMP 
+where created is null;
+
+UPDATE articles 
+Set updated = CURRENT_TIMESTAMP 
+where updated is null;
