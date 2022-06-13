@@ -10,9 +10,14 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func main() {
+func init() {
 	// 環境変数の読み込み
-	loadEnv()
+	if err := godotenv.Load(); err != nil {
+		log.Println(".envファイルの読み込みに失敗しました")
+	}
+}
+
+func main() {
 
 	// Echoインスタンスを作成
 	e := echo.New()
@@ -29,6 +34,7 @@ func main() {
 	// ルーティング
 	router.NewRouter(e, db)
 
+	// ポートの指定
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -36,10 +42,4 @@ func main() {
 
 	// サーバ起動
 	e.Logger.Fatal(e.Start(":" + port))
-}
-
-func loadEnv() {
-	if err := godotenv.Load(".env"); err != nil {
-		log.Println(".envファイルの読み込みに失敗しました")
-	}
 }
