@@ -58,13 +58,16 @@ func generateDsn() string {
 	// 	dbPass = os.Getenv("MYSQL_PASSWORD")
 	// }
 
-	// ローカル開発環境の時
+	// DBの切り替え
 	if os.Getenv("DB_URL") != "" {
 		// 本番環境の時
+		log.Println("本番DB接続")
 		dsn = os.Getenv("CLEARDB_DB_URL")
 	} else {
+		log.Println("ローカルDB接続")
+		// ローカル開発環境の時
 		dsn = dbUser + ":" + dbPass + "@tcp(" + dbAddress + ":3306)/" + dbName + "?parseTime=true&autocommit=0&sql_mode=%27TRADITIONAL,NO_AUTO_VALUE_ON_ZERO,ONLY_FULL_GROUP_BY%27"
 	}
-
+	dsn = os.Getenv("CLEARDB_DB_URL")
 	return dsn
 }
