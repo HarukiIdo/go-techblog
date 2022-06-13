@@ -21,7 +21,6 @@ func NewDB(e *echo.Echo) *sqlx.DB {
 	dbDriver := "mysql"
 
 	dsn := generateDsn()
-	log.Println(dsn)
 
 	// DBオープン
 	db, err := sqlx.Open(dbDriver, dsn)
@@ -69,6 +68,6 @@ func generateDsn() string {
 		// ローカル開発環境の時
 		dsn = dbUser + ":" + dbPass + "@tcp(" + dbAddress + ":3306)/" + dbName + "?parseTime=true&autocommit=0&sql_mode=%27TRADITIONAL,NO_AUTO_VALUE_ON_ZERO,ONLY_FULL_GROUP_BY%27"
 	}
-	dsn = os.Getenv("CLEARDB_DB_URL")
+	log.Println(dsn)
 	return dsn
 }
