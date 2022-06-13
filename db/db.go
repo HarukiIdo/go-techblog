@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
@@ -56,8 +57,14 @@ func generateDsn() string {
 	// 	dbUser = os.Getenv("MYSQL_USER")
 	// 	dbPass = os.Getenv("MYSQL_PASSWORD")
 	// }
-	// DSNの設定
-	dsn = dbUser + ":" + dbPass + "@tcp(" + dbAddress + ":3306)/" + dbName + "?parseTime=true&autocommit=0&sql_mode=%27TRADITIONAL,NO_AUTO_VALUE_ON_ZERO,ONLY_FULL_GROUP_BY%27"
+
+	// ローカル開発環境の時
+	if os.Getenv("DB_URL") != "" {
+		// 本番環境の時
+		dsn = os.Getenv("CLEARDB_DB_URL")
+	} else {
+		dsn = dbUser + ":" + dbPass + "@tcp(" + dbAddress + ":3306)/" + dbName + "?parseTime=true&autocommit=0&sql_mode=%27TRADITIONAL,NO_AUTO_VALUE_ON_ZERO,ONLY_FULL_GROUP_BY%27"
+	}
 
 	return dsn
 }
