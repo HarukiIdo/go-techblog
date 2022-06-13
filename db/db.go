@@ -21,6 +21,7 @@ func NewDB(e *echo.Echo) *sqlx.DB {
 	dbDriver := "mysql"
 
 	dsn := generateDsn()
+	log.Println(dsn)
 
 	// DBオープン
 	db, err := sqlx.Open(dbDriver, dsn)
