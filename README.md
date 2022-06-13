@@ -38,11 +38,11 @@
 
 ## 使用技術
 フロントエンド：HTML,CSS,JavaScript  
-バックエンド：Go, sqlx, air
-フレームワーク：Echo
-DB：MySQL
-開発環境構築：Docker, Docker Compose
-ホスティングサービス：Heroku
+バックエンド：Go, sqlx, air  
+フレームワーク：Echo  
+DB：DockerのMySQLコンテナ、本番環境はClearDB（MySQL）  
+開発環境構築：Docker, Docker Compose  
+インフラ：Heroku
 
 ## DBマイグーイション（golang-migrate/migrate）
 [GitHubリポジトリ](https://github.com/golang-migrate/migrate)
