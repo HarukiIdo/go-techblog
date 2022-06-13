@@ -11,7 +11,7 @@ import (
 func BasicAuth() echo.MiddlewareFunc {
 
 	authUser := os.Getenv("AUTH_USER")
-	authPassword := os.Getenv("AUTH_PASSWORD")
+	authPassword := os.Getenv("AUTH_PASS")
 
 	// 認証成功か失敗を判定する関数
 	basicAuthValidator := func(username, password string, c echo.Context) (bool, error) {

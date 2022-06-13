@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-// Article ...
+// Article expresses ...
 // _form.htmlのname属性と構造体フィールドを紐付ける
 type Article struct {
 	ID        int       `db:"id" form:"id"`

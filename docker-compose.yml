@@ -1,40 +1,40 @@
-version: '3'
+version: '3.8'
+
 services:
   go:
     build:
       context: .
-      dockerfile: build/Dockerfile
+      dockerfile: ./build/Dockerfile
     command: air -c .air.toml
     container_name: go
     environment:
-      - PORT
-      - DSN
-      - DRIVER
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
     stdin_open: true
     tty: true
-    volumes: 
+    volumes:
       - .:/app
     ports:
       - "8080:8080"
     depends_on:
-      - db 
-  
+      - db
+
   db:
     image: mysql:5.7
     container_name: db
-    environment: 
-      - MYSQL_ROOT_PASSWORD
-      - MYSQL_DATABASE
-      - MYSQL_USER 
-      - MYSQL_PASSWORD
-      - TZ
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: go_db
+      MYSQL_USER: go_user
+      MYSQL_PASSWORD: password
+      TZ: 'Asia/Tokyo'
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    volumes:
-      - db-data:/var/lib/mysql
-      - ./db/my.cnf:/etc/mysql/conf.d/mycnf
     ports:
       - "3306:3306"
-    
-volumes: 
+    volumes:
+      - ./db/db-data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d
+      - ./db/my.cnf:/etc/mysql/conf.d/my.conf
+
+volumes:
   db-data:
-    driver: local

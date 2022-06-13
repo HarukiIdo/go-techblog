@@ -1,7 +1,12 @@
 ALTER TABLE articles
   add column body mediumtext NOT NULL,
-  add column created datetime,
-  add column updated datetime;
+  add column createdat datetime,
+  add column updatedat datetime;
 
-UPDATE articles Set created = CURRENT_TIMESTAMP where created is null;
-UPDATE articles Set updated = CURRENT_TIMESTAMP where updated is null;
+UPDATE articles 
+Set createdat = CURRENT_TIMESTAMP 
+where createdat is null;
+
+UPDATE articles 
+Set updatedat = CURRENT_TIMESTAMP 
+where updatedat is null;
