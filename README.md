@@ -1,6 +1,13 @@
 # go-techblog
 ## 概要
-個人用の技術系プログサイト
+個人用の技術系プログサイト  
+
+- 閲覧者向け画面
+<img src="https://user-images.githubusercontent.com/72590721/173298519-568998ed-f2bc-41f4-83cf-af558ede8e1b.png" width="700">
+
+
+- 投稿者向け画面
+<img src="https://user-images.githubusercontent.com/72590721/173298135-27dea615-09d9-41a0-b051-3fe8dea63dfb.png" width="700">
 
 ## 動機
 学んだ技術の陳腐化を防ぐため、QiitaやZennなどのブログサイトに技術的なアウトプットをしたかったが、敷居が高く重い腰が上がらなかったため、気軽にアウトプットできる環境が欲しかった
