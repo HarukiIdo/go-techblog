@@ -51,13 +51,6 @@ func generateDsn() string {
 
 	var dsn string
 
-	// 本番環境に接続する場合
-	// if os.Getenv("DB_ENV") == db_env {
-	// 	dbName = os.Getenv("MYSQL_DATABASE")
-	// 	dbUser = os.Getenv("MYSQL_USER")
-	// 	dbPass = os.Getenv("MYSQL_PASSWORD")
-	// }
-
 	// DBの切り替え
 	if os.Getenv("DB_URL") != "" {
 		// 本番環境の時
