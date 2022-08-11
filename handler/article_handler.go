@@ -63,11 +63,7 @@ func (h *articleHandler) ArticleCreate(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, output)
 	}
 
-	// SQL実行結果から作成されたレコードのIDを取得
-	id, _ := res.LastInsertId()
-	article.ID = int(id)
-
-	output.Article = &article
+	output.Article = res
 
 	return c.JSON(http.StatusOK, output)
 }
