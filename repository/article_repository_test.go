@@ -1,17 +1,15 @@
 package repository
 
 import (
-	"fmt"
 	"testing"
 
-	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/HarukiIdo/go-techblog/custom_error"
 	"github.com/HarukiIdo/go-techblog/model"
 	"github.com/jmoiron/sqlx"
-	"github.com/stretchr/testify/assert"
+	sqlxmock "github.com/zhashkevych/go-sqlxmock"
 )
 
 func TestArticle_Create(t *testing.T) {
-
 	t.Run(
 		"正常系：エラーなし",
 		func(t *testing.T) {
@@ -20,27 +18,51 @@ func TestArticle_Create(t *testing.T) {
 				Body:  "article body",
 			}
 
-			// モック用のコネクションを作成
-			db, mock, err := sqlmock.New()
-			assert.NoError(t, err)
-			defer db.Close()
-			dbx := sqlx.NewDb(db, "mysql")
+			// テストケースを用意
+			tests := []struct {
+				name    string
+				db      *sqlx.DB
+				article model.Article
+				want    error
+				wantErr bool
+			}{
+				{
+					name: "OK",
+					db: func() *sqlx.DB {
+						// モック用のコネクションを作成
+						db, mock, err := sqlxmock.Newx()
+						if err != nil {
+							t.Fatal("sqlxmock.Newx() failure", err)
+						}
+						rows := sqlxmock.NewRows([]string{"id"}).AddRow()
+						mock.ExpectQuery("INSERT INTO articles").WithArgs(article.Title, article.Body, article.CreatedAt, article.UpdatedAt).WillReturnRows(rows)
+						return db
+					}(),
+					article: model.Article{
+						Title: "first_title",
+						Body:  "first_body",
+					},
+					want: &custom_error.CreateError{Msg: "create error"},
+				},
+				{},
+			}
 
-			// SQLのクエリの引数と戻り値が期待値と一致するか
-			mock.ExpectPrepare(`INSERT INTO articles`).ExpectExec().WithArgs(article.Title, article.Body, article.CreatedAt, article.UpdatedAt).WillReturnResult(sqlmock.NewResult(1, 1))
+			for _, tt := range tests {
+				t.Run(tt.name, func(t *testing.T) {
+					// テスト対象のリポジトリを作成
 
-			// テスト対象のリポジトリを作成
-			r := NewArticleRepository(dbx)
-
-			res, err := r.ArticleCreate(article)
-			fmt.Println(res)
-
-			// エラーが発生しないことを期待
-			assert.NoError(t, err)
-
-			// 上記で指定した通りにモックが呼ばれることを期待
-			assert.NoError(t, mock.ExpectationsWereMet())
-
+					r := NewArticleRepository(tt.db)
+					t.Cleanup(func() { tt.db.Close() })
+					got, err := r.ArticleCreate(&tt.article)
+					if (err != nil) != tt.wantErr {
+						t.Errorf("Get() error new = %v, wantErr %v", err, tt.wantErr)
+						return
+					}
+					if err == nil && got != &tt.article {
+						t.Errorf("get = %v, but want = %v", got, tt.want)
+					}
+				})
+			}
 		},
 	)
 }

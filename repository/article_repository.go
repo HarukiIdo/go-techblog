@@ -12,7 +12,7 @@ import (
 
 type ArticleRepository interface {
 	ArticleListByCursor(cusor int) ([]*model.Article, error)
-	ArticleCreate(article *model.Article) (sql.Result, error)
+	ArticleCreate(article *model.Article) (*model.Article, error)
 	ArticleUpdate(article *model.Article) (sql.Result, error)
 	ArticleGetByID(id int) (*model.Article, error)
 	ArticleDelete(id int) error
@@ -50,7 +50,7 @@ func (r *articleRepository) ArticleListByCursor(cursor int) ([]*model.Article, e
 }
 
 // ArticleCreate ...
-func (r *articleRepository) ArticleCreate(article *model.Article) (sql.Result, error) {
+func (r *articleRepository) ArticleCreate(article *model.Article) (*model.Article, error) {
 
 	//現在時刻を取得
 	now := time.Now()
@@ -73,8 +73,12 @@ func (r *articleRepository) ArticleCreate(article *model.Article) (sql.Result, e
 	// SQLの実行に成功したらコミット
 	tx.Commit()
 
+	// SQL実行結果から作成されたレコードのIDを取得
+	id, _ := res.LastInsertId()
+	article.ID = int(id)
+
 	// SQLの実行結果を返す
-	return res, nil
+	return article, nil
 }
 
 func (r *articleRepository) ArticleUpdate(article *model.Article) (sql.Result, error) {
